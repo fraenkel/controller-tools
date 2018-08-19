@@ -18,6 +18,8 @@ package manager
 
 import (
 	"fmt"
+	"go/build"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -50,6 +52,11 @@ func (a *APIs) GetInput() (input.Input, error) {
 	if err != nil {
 		return input.Input{}, err
 	}
+
+	if os.Getenv("GOPATH") == "" {
+		deepCopy = deepCopy + " -o " + filepath.Join(build.Default.GOPATH, "src")
+	}
+
 	if len(a.Comments) == 0 {
 		a.Comments = append(a.Comments,
 			"// Generate deepcopy for apis", fmt.Sprintf("%s -h %s", deepCopy, b))
